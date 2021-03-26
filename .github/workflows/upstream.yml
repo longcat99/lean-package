@@ -137,24 +137,15 @@ jobs:
         rm -f subconverter/patches/010-missing-header.patch
         sed -i 's?../../luci.mk?$(TOPDIR)/feeds/luci/luci.mk?g' */Makefile
         sed -i 's?../../lang?$(TOPDIR)/feeds/packages/lang?g' */Makefile
-        # bash diy/create_acl_for_luci.sh -a || true
+        bash diy/create_acl_for_luci.sh -a || true
         bash diy/convert_translation.sh -a || true
-        rm -Rf antileech/src && git clone https://github.com/persmule/amule-dlp.antiLeech antileech/src
         sed -i '/\/etc\/config\/AdGuardHome/a /etc/config/AdGuardHome.yaml' luci-app-adguardhome/Makefile
         sed -i 's/+rclone\( \|$\)/+rclone +fuse-utils\1/g' luci-app-rclone/Makefile
         sed -i 's/ca-certificates/ca-bundle/g' */Makefile
         sed -i 's/ +kmod-fs-exfat//g' automount/Makefile
         sed -i 's/+libcap /+libcap +libcap-bin /' luci-app-openclash/Makefile
-        sed -i 's/@GHCODELOAD/https:\/\/codeload.github.com/' */Makefile
-        find */luasrc/view/ -maxdepth 2 -name "*.htm" | xargs -i sed -i 's?"http://" + window.location.hostname?window.location.protocol + "//" + window.location.hostname?g' {}
-        getversion() {
-        	ver=$(basename $(curl -Ls -o /dev/null -w %{url_effective} https://github.com/$1/releases/latest) | grep -o -E "[0-9].+")
-        	[ $ver ] && echo $ver || git ls-remote --tags git://github.com/$1 | cut -d/ -f3- | sort -t. -nk1,2 -k3 | awk '/^[^{]*$/{version=$1}END{print version}' | grep -o -E "[0-9].+"
-        }
-        sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=$(getversion v2fly/v2ray-core)/g" v2ray/Makefile
-        find ./*/ -maxdepth 1 -name "Makefile" ! -path "*tinyfecvpn*" ! -path "*gowebdav*" | xargs -i sed -i "s/PKG_HASH:=.*/PKG_HASH:=skip/g" {}
-        sed -i 's/SUBDIRS=/M=/g' */Makefile
-        # sed -i 's/\(add ucitrack \(.*\)\)/\1\n\tservice \2 enable/g' luci-app*/root/etc/uci-defaults/*
+      
+        
         
     - name: 应用补丁
       run: |
